@@ -3,80 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay with Grey | Your Business</title>
+    <title>PS5 Store | Secure Payment with Grey</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .card { background: white; border-radius: 24px; padding: 32px; max-width: 500px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
-        h1 { font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-        .sub { color: #475569; margin-bottom: 32px; border-left: 3px solid #3b82f6; padding-left: 12px; }
-        .amount-box { background: #f8fafc; padding: 16px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-        .amount-label { font-weight: 600; color: #1e293b; }
-        .amount-value { font-size: 28px; font-weight: 800; color: #0f172a; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
-        input, select { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 16px; transition: all 0.2s; }
-        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-        .row-2 { display: flex; gap: 16px; }
-        .row-2 .form-group { flex: 1; }
-        button { width: 100%; background: #0f172a; color: white; border: none; padding: 14px; border-radius: 40px; font-size: 16px; font-weight: 600; margin-top: 16px; cursor: pointer; transition: all 0.2s; }
-        button:hover { background: #1e293b; transform: scale(1.02); }
-        #message { margin-top: 20px; padding: 12px; border-radius: 12px; text-align: center; font-size: 14px; display: none; }
-        .success { background: #dcfce7; color: #166534; display: block !important; }
-        .error { background: #fee2e2; color: #991b1b; display: block !important; }
-        .flex-icon { display: flex; align-items: center; justify-content: center; gap: 8px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0b1120 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .tagline {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        /* Two-column layout */
+        .product-payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* ========== PRODUCT CARD (LEFT SIDE) ========== */
+        .product-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .ps5-icon {
+            font-size: 120px;
+            filter: drop-shadow(0 10px 20px rgba(0, 212, 255, 0.3));
+        }
+
+        .product-details {
+            padding: 30px;
+        }
+
+        .product-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .product-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 800;
+            color: #00d4ff;
+            margin: 20px 0;
+        }
+
+        .price small {
+            font-size: 18px;
+            font-weight: 400;
+            color: #94a3b8;
+        }
+
+        .specs {
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .spec-value {
+            font-weight: 500;
+            color: white;
+        }
+
+        /* ========== DELIVERY INFO CARD ========== */
+        .delivery-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .delivery-title {
+            color: #00d4ff;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .delivery-detail {
+            color: #cbd5e1;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        /* ========== PAYMENT CARD (RIGHT SIDE) ========== */
+        .payment-card {
+            background: white;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        .payment-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .payment-sub {
+            color: #475569;
+            margin-bottom: 28px;
+            border-left: 3px solid #3b82f6;
+            padding-left: 12px;
+        }
+
+        .amount-box {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .amount-label {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .amount-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .row-2 {
+            display: flex;
+            gap: 16px;
+        }
+
+        .row-2 .form-group {
+            flex: 1;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector label {
+            margin: 0;
+        }
+
+        .quantity-selector input {
+            width: 80px;
+            text-align: center;
+            padding: 8px;
+        }
+
+        button {
+            width: 100%;
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #1e293b;
+            transform: scale(1.02);
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            display: block !important;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block !important;
+        }
+
+        .test-note {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 900px) {
+            .product-payment-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            body {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>Secure Payment</h1>
-    <div class="sub">Powered by <strong>Grey</strong> • US Transactions</div>
-    
-    <div class="amount-box">
-        <span class="amount-label">Total Amount (USD)</span>
-        <span class="amount-value" id="displayAmount">$0.00</span>
+<div class="container">
+    <div class="header">
+        <div class="logo">🎮 NextGen Gaming</div>
+        <div class="tagline">Authentic PlayStation 5 • Worldwide Shipping</div>
     </div>
 
-    <form id="paymentForm">
-        <div class="form-group">
-            <label>Full Name (as on card)</label>
-            <input type="text" id="cardName" placeholder="John Doe" required>
-        </div>
-        <div class="form-group">
-            <label>Card Number</label>
-            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
-        </div>
-        <div class="row-2">
-            <div class="form-group">
-                <label>Expiry (MM/YY)</label>
-                <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+    <div class="product-payment-grid">
+        <!-- LEFT: PRODUCT & DELIVERY INFO -->
+        <div>
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="ps5-icon">🎮</div>
+                </div>
+                <div class="product-details">
+                    <span class="product-badge">🔥 Best Seller</span>
+                    <h1 class="product-title">PlayStation 5 Console</h1>
+                    <div class="price">$550 <small>USD</small></div>
+                    <p style="color: #94a3b8; margin-bottom: 20px;">Ultra-high speed SSD • 4K gaming • Ray tracing • Backward compatible</p>
+                    
+                    <div class="specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Storage</span>
+                            <span class="spec-value">825GB SSD</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Resolution</span>
+                            <span class="spec-value">4K UHD (8K support)</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Controller</span>
+                            <span class="spec-value">DualSense Wireless</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Warranty</span>
+                            <span class="spec-value">1 Year</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>CVC</label>
-                <input type="text" id="cvc" placeholder="123" maxlength="4" required>
+
+            <!-- Delivery Information -->
+            <div class="delivery-card">
+                <div class="delivery-title">
+                    🚚 Shipment & Delivery
+                </div>
+                <div class="delivery-detail">📍 Ships from USA warehouse to anywhere worldwide</div>
+                <div class="delivery-detail">⏱️ Delivery time: 5-10 business days (Express: 2-4 days)</div>
+                <div class="delivery-detail">🔒 Fully insured & tracked shipment</div>
+                <div class="delivery-detail">💰 Free shipping on orders over $500</div>
+                <div class="delivery-detail">📦 Secure packaging with tamper-proof seal</div>
             </div>
         </div>
-        <div class="form-group">
-            <label>Amount (USD)</label>
-            <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+
+        <!-- RIGHT: PAYMENT FORM -->
+        <div class="payment-card">
+            <h2>Complete Purchase</h2>
+            <div class="payment-sub">Powered by <strong>Grey</strong> • Secure US transactions</div>
+
+            <div class="quantity-selector">
+                <label style="font-weight: 700;">Quantity:</label>
+                <input type="number" id="quantity" min="1" max="10" value="1" style="width: 80px;">
+                <span style="color: #475569;">x $550 = <strong id="totalDisplay">$550.00</strong></span>
+            </div>
+
+            <div class="amount-box">
+                <span class="amount-label">Total Amount (USD)</span>
+                <span class="amount-value" id="displayAmount">$550.00</span>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label>Full Name (as on card)</label>
+                    <input type="text" id="cardName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Expiry (MM/YY)</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CVC</label>
+                        <input type="text" id="cvc" placeholder="123" maxlength="4" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email (for receipt & tracking)</label>
+                    <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+                
+                <button type="submit" id="payBtn">Pay with Grey</button>
+            </form>
+            <div id="message"></div>
+            <div class="test-note">
+                🔐 Test mode — Use card: 4242 4242 4242 4242 | Any expiry | Any CVC
+            </div>
         </div>
-        <button type="submit" id="payBtn">Pay with Grey</button>
-    </form>
-    <div id="message"></div>
-    <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-top: 24px;">Test mode: Card 4242 4242 4242 4242 | Any future expiry</p>
+    </div>
 </div>
 
 <script>
+    const quantityInput = document.getElementById('quantity');
+    const totalDisplaySpan = document.getElementById('totalDisplay');
+    const amountDisplaySpan = document.getElementById('displayAmount');
     const form = document.getElementById('paymentForm');
-    const amountInput = document.getElementById('amount');
-    const displaySpan = document.getElementById('displayAmount');
+    const UNIT_PRICE = 550;
 
-    amountInput.addEventListener('input', () => {
-        let val = amountInput.value;
-        displaySpan.innerText = val ? `$${parseFloat(val).toFixed(2)}` : "$0.00";
-    });
+    function updateTotal() {
+        let qty = parseInt(quantityInput.value) || 1;
+        if (qty < 1) qty = 1;
+        if (qty > 10) qty = 10;
+        const total = UNIT_PRICE * qty;
+        totalDisplaySpan.innerText = `$${total.toFixed(2)}`;
+        amountDisplaySpan.innerText = `$${total.toFixed(2)}`;
+        return total;
+    }
 
-    // Simple formatting for card number
+    quantityInput.addEventListener('input', updateTotal);
+    updateTotal();
+
+    // Format card number with spaces
     document.getElementById('cardNumber').addEventListener('input', function(e) {
         let val = e.target.value.replace(/\s/g, '');
         if (val.length > 16) val = val.slice(0,16);
@@ -93,18 +466,20 @@
         payBtn.disabled = true;
         payBtn.innerText = 'Processing...';
 
-        // Prepare payload for your backend
+        const totalAmount = UNIT_PRICE * (parseInt(quantityInput.value) || 1);
+
         const payload = {
             fullName: document.getElementById('cardName').value,
             cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
             expiry: document.getElementById('expiry').value,
             cvc: document.getElementById('cvc').value,
-            amount: parseFloat(amountInput.value),
-            currency: 'USD'
+            amount: totalAmount,
+            currency: 'USD',
+            email: document.getElementById('email').value,
+            quantity: parseInt(quantityInput.value) || 1
         };
 
         try {
-            // Call YOUR backend endpoint (which will talk to Grey API)
             const response = await fetch('/api/create-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -113,10 +488,11 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
-                msgDiv.innerText = '✅ Payment successful! Transaction ID: ' + (result.transactionId || 'N/A');
+                msgDiv.innerText = `✅ Payment successful! ${payload.quantity} x PS5 ordered. Shipment tracking will be sent to ${payload.email}. Transaction ID: ${result.transactionId}`;
                 msgDiv.className = 'success';
                 form.reset();
-                displaySpan.innerText = "$0.00";
+                quantityInput.value = 1;
+                updateTotal();
             } else {
                 throw new Error(result.message || 'Payment failed');
             }

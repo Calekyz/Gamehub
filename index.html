@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay with Grey | Your Business</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 24px; padding: 32px; max-width: 500px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        h1 { font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+        .sub { color: #475569; margin-bottom: 32px; border-left: 3px solid #3b82f6; padding-left: 12px; }
+        .amount-box { background: #f8fafc; padding: 16px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+        .amount-label { font-weight: 600; color: #1e293b; }
+        .amount-value { font-size: 28px; font-weight: 800; color: #0f172a; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+        input, select { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 16px; transition: all 0.2s; }
+        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .row-2 { display: flex; gap: 16px; }
+        .row-2 .form-group { flex: 1; }
+        button { width: 100%; background: #0f172a; color: white; border: none; padding: 14px; border-radius: 40px; font-size: 16px; font-weight: 600; margin-top: 16px; cursor: pointer; transition: all 0.2s; }
+        button:hover { background: #1e293b; transform: scale(1.02); }
+        #message { margin-top: 20px; padding: 12px; border-radius: 12px; text-align: center; font-size: 14px; display: none; }
+        .success { background: #dcfce7; color: #166534; display: block !important; }
+        .error { background: #fee2e2; color: #991b1b; display: block !important; }
+        .flex-icon { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Secure Payment</h1>
+    <div class="sub">Powered by <strong>Grey</strong> • US Transactions</div>
+    
+    <div class="amount-box">
+        <span class="amount-label">Total Amount (USD)</span>
+        <span class="amount-value" id="displayAmount">$0.00</span>
+    </div>
+
+    <form id="paymentForm">
+        <div class="form-group">
+            <label>Full Name (as on card)</label>
+            <input type="text" id="cardName" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+        </div>
+        <div class="row-2">
+            <div class="form-group">
+                <label>Expiry (MM/YY)</label>
+                <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+            </div>
+            <div class="form-group">
+                <label>CVC</label>
+                <input type="text" id="cvc" placeholder="123" maxlength="4" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Amount (USD)</label>
+            <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+        </div>
+        <button type="submit" id="payBtn">Pay with Grey</button>
+    </form>
+    <div id="message"></div>
+    <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-top: 24px;">Test mode: Card 4242 4242 4242 4242 | Any future expiry</p>
+</div>
+
+<script>
+    const form = document.getElementById('paymentForm');
+    const amountInput = document.getElementById('amount');
+    const displaySpan = document.getElementById('displayAmount');
+
+    amountInput.addEventListener('input', () => {
+        let val = amountInput.value;
+        displaySpan.innerText = val ? `$${parseFloat(val).toFixed(2)}` : "$0.00";
+    });
+
+    // Simple formatting for card number
+    document.getElementById('cardNumber').addEventListener('input', function(e) {
+        let val = e.target.value.replace(/\s/g, '');
+        if (val.length > 16) val = val.slice(0,16);
+        let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
+        e.target.value = formatted;
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payBtn = document.getElementById('payBtn');
+        const msgDiv = document.getElementById('message');
+        msgDiv.className = '';
+        msgDiv.style.display = 'none';
+        payBtn.disabled = true;
+        payBtn.innerText = 'Processing...';
+
+        // Prepare payload for your backend
+        const payload = {
+            fullName: document.getElementById('cardName').value,
+            cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+            expiry: document.getElementById('expiry').value,
+            cvc: document.getElementById('cvc').value,
+            amount: parseFloat(amountInput.value),
+            currency: 'USD'
+        };
+
+        try {
+            // Call YOUR backend endpoint (which will talk to Grey API)
+            const response = await fetch('/api/create-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                msgDiv.innerText = '✅ Payment successful! Transaction ID: ' + (result.transactionId || 'N/A');
+                msgDiv.className = 'success';
+                form.reset();
+                displaySpan.innerText = "$0.00";
+            } else {
+                throw new Error(result.message || 'Payment failed');
+            }
+        } catch (error) {
+            msgDiv.innerText = '❌ ' + error.message;
+            msgDiv.className = 'error';
+        } finally {
+            payBtn.disabled = false;
+            payBtn.innerText = 'Pay with Grey';
+        }
+    });
+</script>
+</body>
+</html>

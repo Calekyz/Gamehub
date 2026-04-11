@@ -653,7 +653,7 @@
     quantityInput.addEventListener('input', updateTotal);
     updateTotal();
 
-    // Get shipping data helper function
+    // Helper: Get shipping data
     function getShippingData() {
         return {
             firstName: document.getElementById('shippingFirstName').value,
@@ -695,6 +695,7 @@
         });
     });
 
+    // Copy to clipboard
     window.copyToClipboard = function(elementId) {
         const element = document.getElementById(elementId);
         const text = element.innerText;
@@ -709,8 +710,8 @@
         });
     };
 
-    // AIRTM Form Submit
-    document.getElementById('airtmSubmitBtn').addEventListener('click', (e) => {
+    // ========== AIRTM SUBMIT (Sends to backend) ==========
+    document.getElementById('airtmSubmitBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         
         if (!validateShipping()) {
@@ -724,6 +725,7 @@
         const username = document.getElementById('airtmUsername').value;
         const total = updateTotal();
         const shipping = getShippingData();
+        const quantity = parseInt(quantityInput.value) || 1;
         const msgDiv = document.getElementById('airtmMessage');
 
         if (!email) {
@@ -733,19 +735,42 @@
         }
 
         msgDiv.className = 'message info';
-        msgDiv.innerText = '⏳ Sending payment request...';
+        msgDiv.innerText = '⏳ Submitting your order...';
 
-        setTimeout(() => {
-            msgDiv.className = 'message success';
-            msgDiv.innerHTML = `✅ Payment request sent to <strong>${email}</strong>!<br>
-            📦 Shipping to: ${shipping.firstName} ${shipping.lastName}, ${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zip}, ${shipping.country}<br>
-            Total: $${total.toFixed(2)}<br>
-            We will contact you within 24 hours.`;
-        }, 1000);
+        try {
+            const response = await fetch('/api/submit-airtm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customerEmail: email,
+                    airtmUsername: username,
+                    shipping: shipping,
+                    quantity: quantity,
+                    totalAmount: total
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                msgDiv.className = 'message success';
+                msgDiv.innerHTML = `✅ ${result.message}<br>
+                📦 Order #: ${result.orderNumber}<br>
+                We will contact you within 24 hours at ${email}.`;
+                
+                // Clear form
+                document.getElementById('airtmForm').reset();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            msgDiv.className = 'message error';
+            msgDiv.innerText = '❌ Error: ' + error.message;
+        }
     });
 
-    // CRYPTO Form Submit
-    document.getElementById('cryptoSubmitBtn').addEventListener('click', (e) => {
+    // ========== CRYPTO SUBMIT (Sends to backend) ==========
+    document.getElementById('cryptoSubmitBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         
         if (!validateShipping()) {
@@ -758,6 +783,7 @@
         const email = document.getElementById('cryptoEmail').value;
         const total = updateTotal();
         const shipping = getShippingData();
+        const quantity = parseInt(quantityInput.value) || 1;
         const msgDiv = document.getElementById('cryptoMessage');
         const cryptoDetailsDiv = document.getElementById('cryptoDetails');
 
@@ -767,15 +793,41 @@
             return;
         }
 
-        cryptoDetailsDiv.style.display = 'block';
-        document.getElementById('cryptoAmount').innerText = `$${total.toFixed(2)} USD`;
-        
-        msgDiv.className = 'message success';
-        msgDiv.innerHTML = `✅ Thank you ${shipping.firstName}! A confirmation email has been sent to <strong>${email}</strong>.<br>
-        📦 We will ship to: ${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zip}, ${shipping.country}<br>
-        Please send exactly $${total.toFixed(2)} USDT to the address above.`;
-        
-        cryptoDetailsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        msgDiv.className = 'message info';
+        msgDiv.innerText = '⏳ Submitting your order...';
+
+        try {
+            const response = await fetch('/api/submit-crypto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customerEmail: email,
+                    shipping: shipping,
+                    quantity: quantity,
+                    totalAmount: total
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Show crypto details
+                cryptoDetailsDiv.style.display = 'block';
+                document.getElementById('cryptoAmount').innerText = `$${total.toFixed(2)} USD`;
+                
+                msgDiv.className = 'message success';
+                msgDiv.innerHTML = `✅ ${result.message}<br>
+                📦 Order #: ${result.orderNumber}<br>
+                Please send exactly $${total.toFixed(2)} USDT to the address below.`;
+                
+                cryptoDetailsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            msgDiv.className = 'message error';
+            msgDiv.innerText = '❌ Error: ' + error.message;
+        }
     });
 </script>
 </body>

@@ -1,56 +1,145 @@
 const express = require('express');
-const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.')); // Serves HTML from current folder
+app.use(express.static('.')); // Serves your HTML file
 
-const GREY_API_KEY = process.env.GREY_SECRET_KEY;
-const GREY_API_URL = 'https://api.grey.co/v1';
+// File to store orders
+const ORDERS_FILE = path.join(__dirname, 'orders.json');
 
-app.post('/api/create-payment', async (req, res) => {
-    const { fullName, cardNumber, expiry, cvc, amount, currency, email, quantity } = req.body;
+// Initialize orders file if it doesn't exist
+if (!fs.existsSync(ORDERS_FILE)) {
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2));
+}
 
-    if (!amount || amount <= 0) {
-        return res.status(400).json({ success: false, message: 'Invalid amount' });
+// Helper: Save order to JSON file
+function saveOrder(orderData) {
+    const orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+    const newOrder = {
+        id: orders.length + 1,
+        orderNumber: `PS5-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        ...orderData
+    };
+    orders.push(newOrder);
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+    return newOrder;
+}
+
+// Helper: Send email notification (using EmailJS or Nodemailer)
+// For now, we'll log to console. You can upgrade to actual email later.
+function sendEmailNotification(order) {
+    console.log(`
+    ========================================
+    🎮 NEW PS5 ORDER RECEIVED! 🎮
+    ========================================
+    Order #: ${order.orderNumber}
+    Customer: ${order.shipping.firstName} ${order.sipping.lastName}
+    Email: ${order.customerEmail}
+    Phone: ${order.shipping.phone}
+    Address: ${order.shipping.address}, ${order.shipping.city}, ${order.shipping.state} ${order.shipping.zip}, ${order.shipping.country}
+    Quantity: ${order.quantity}
+    Total: $${order.totalAmount}
+    Payment Method: ${order.paymentMethod}
+    ========================================
+    `);
+}
+
+// ============= API ENDPOINTS =============
+
+// 1. Submit Airtm payment request
+app.post('/api/submit-airtm', (req, res) => {
+    const { customerEmail, airtmUsername, shipping, quantity, totalAmount } = req.body;
+
+    // Validate required fields
+    if (!customerEmail || !shipping?.firstName || !shipping?.address) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Missing required fields. Please fill all shipping information.' 
+        });
     }
 
-    const [expMonth, expYear] = expiry.split('/');
+    // Save order
+    const order = saveOrder({
+        customerEmail,
+        paymentMethod: 'airtm',
+        airtmUsername: airtmUsername || null,
+        shipping,
+        quantity,
+        totalAmount,
+        status: 'pending_payment'
+    });
 
-    try {
-        const paymentMethod = await axios.post(`${GREY_API_URL}/payment_methods`, {
-            type: 'card',
-            card: {
-                number: cardNumber,
-                exp_month: expMonth,
-                exp_year: `20${expYear}`,
-                cvc: cvc
-            }
-        }, {
-            headers: { 'Authorization': `Bearer ${GREY_API_KEY}`, 'Content-Type': 'application/json' }
-        });
+    // Send notification
+    sendEmailNotification(order);
 
-        const paymentMethodId = paymentMethod.data.id;
-
-        const charge = await axios.post(`${GREY_API_URL}/charges`, {
-            amount: Math.round(amount * 100),
-            currency: currency.toLowerCase(),
-            payment_method: paymentMethodId,
-            description: `${quantity} x PS5 - Order for ${fullName} (${email})`
-        }, {
-            headers: { 'Authorization': `Bearer ${GREY_API_KEY}` }
-        });
-
-        res.json({ success: true, transactionId: charge.data.id });
-
-    } catch (error) {
-        console.error('Grey API Error:', error.response?.data || error.message);
-        res.status(400).json({ success: false, message: error.response?.data?.error?.message || 'Transaction failed' });
-    }
+    res.json({
+        success: true,
+        message: 'Payment request sent successfully!',
+        orderNumber: order.orderNumber
+    });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// 2. Submit Crypto payment request
+app.post('/api/submit-crypto', (req, res) => {
+    const { customerEmail, shipping, quantity, totalAmount } = req.body;
+
+    // Validate required fields
+    if (!customerEmail || !shipping?.firstName || !shipping?.address) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Missing required fields. Please fill all shipping information.' 
+        });
+    }
+
+    // Save order
+    const order = saveOrder({
+        customerEmail,
+        paymentMethod: 'crypto_usdt',
+        shipping,
+        quantity,
+        totalAmount,
+        status: 'pending_payment',
+        cryptoAddress: 'TVvYRDdPyQCCg22onuaau56rS5PNP3Gx7s'
+    });
+
+    // Send notification
+    sendEmailNotification(order);
+
+    res.json({
+        success: true,
+        message: 'Crypto payment details sent!',
+        orderNumber: order.orderNumber,
+        cryptoAddress: 'TVvYRDdPyQCCg22onuaau56rS5PNP3Gx7s'
+    });
+});
+
+// 3. Get all orders (for your admin view)
+app.get('/api/orders', (req, res) => {
+    const orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+    res.json(orders);
+});
+
+// 4. Get single order by ID
+app.get('/api/orders/:id', (req, res) => {
+    const orders = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+    const order = orders.find(o => o.id == req.params.id);
+    if (!order) {
+        return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+    res.json(order);
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📦 Orders will be saved to: ${ORDERS_FILE}`);
+});

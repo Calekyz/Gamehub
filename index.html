@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS5 Store | Secure Payment with Grey</title>
+    <title>PS5 Store | Multiple Payment Options</title>
     <style>
         * {
             margin: 0;
@@ -22,13 +22,11 @@
             padding: 40px 20px;
         }
 
-        /* Container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 50px;
@@ -49,7 +47,6 @@
             font-size: 18px;
         }
 
-        /* Two-column layout */
         .product-payment-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -57,7 +54,7 @@
             align-items: start;
         }
 
-        /* ========== PRODUCT CARD (LEFT SIDE) ========== */
+        /* PRODUCT CARD */
         .product-card {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border-radius: 32px;
@@ -72,7 +69,6 @@
         }
 
         .product-image {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
             text-align: center;
             padding: 40px 20px;
             border-bottom: 1px solid rgba(59, 130, 246, 0.2);
@@ -142,7 +138,6 @@
             color: white;
         }
 
-        /* ========== DELIVERY INFO CARD ========== */
         .delivery-card {
             background: rgba(30, 41, 59, 0.8);
             border-radius: 20px;
@@ -170,7 +165,7 @@
             font-size: 14px;
         }
 
-        /* ========== PAYMENT CARD (RIGHT SIDE) ========== */
+        /* PAYMENT CARD */
         .payment-card {
             background: white;
             border-radius: 32px;
@@ -213,6 +208,65 @@
             color: #0f172a;
         }
 
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector input {
+            width: 80px;
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        /* Payment Options */
+        .payment-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .pay-option-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .pay-option-btn.active {
+            background: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+
+        .pay-option-btn:hover:not(.active) {
+            border-color: #3b82f6;
+            background: #f1f5f9;
+        }
+
+        /* Payment Forms */
+        .payment-form-panel {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .payment-form-panel.active-panel {
+            display: block;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -225,7 +279,7 @@
             color: #334155;
         }
 
-        input, select {
+        input, textarea {
             width: 100%;
             padding: 12px 16px;
             border: 1.5px solid #e2e8f0;
@@ -234,39 +288,10 @@
             transition: all 0.2s;
         }
 
-        input:focus {
+        input:focus, textarea:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .row-2 {
-            display: flex;
-            gap: 16px;
-        }
-
-        .row-2 .form-group {
-            flex: 1;
-        }
-
-        .quantity-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: #f8fafc;
-            padding: 8px 16px;
-            border-radius: 40px;
-            margin-bottom: 20px;
-        }
-
-        .quantity-selector label {
-            margin: 0;
-        }
-
-        .quantity-selector input {
-            width: 80px;
-            text-align: center;
-            padding: 8px;
         }
 
         button {
@@ -274,11 +299,11 @@
             background: #0f172a;
             color: white;
             border: none;
-            padding: 16px;
+            padding: 14px;
             border-radius: 40px;
             font-size: 16px;
             font-weight: 700;
-            margin-top: 16px;
+            margin-top: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -288,8 +313,38 @@
             transform: scale(1.02);
         }
 
-        #message {
-            margin-top: 20px;
+        .crypto-address {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 16px 0;
+            word-break: break-all;
+        }
+
+        .crypto-address code {
+            background: #0f172a;
+            color: #00d4ff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .copy-btn {
+            background: #3b82f6;
+            margin-top: 8px;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+
+        .message {
+            margin-top: 16px;
             padding: 12px;
             border-radius: 12px;
             text-align: center;
@@ -297,34 +352,37 @@
             display: none;
         }
 
-        .success {
+        .message.success {
             background: #dcfce7;
             color: #166534;
-            display: block !important;
+            display: block;
         }
 
-        .error {
+        .message.error {
             background: #fee2e2;
             color: #991b1b;
-            display: block !important;
+            display: block;
         }
 
-        .test-note {
-            font-size: 11px;
-            color: #94a3b8;
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
+        }
+
+        .maintenance-note {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 16px;
+            font-size: 14px;
         }
 
         @media (max-width: 900px) {
             .product-payment-grid {
                 grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            body {
-                padding: 20px;
             }
         }
     </style>
@@ -337,7 +395,7 @@
     </div>
 
     <div class="product-payment-grid">
-        <!-- LEFT: PRODUCT & DELIVERY INFO -->
+        <!-- LEFT: PRODUCT INFO -->
         <div>
             <div class="product-card">
                 <div class="product-image">
@@ -348,33 +406,17 @@
                     <h1 class="product-title">PlayStation 5 Console</h1>
                     <div class="price">$550 <small>USD</small></div>
                     <p style="color: #94a3b8; margin-bottom: 20px;">Ultra-high speed SSD • 4K gaming • Ray tracing • Backward compatible</p>
-                    
                     <div class="specs">
-                        <div class="spec-item">
-                            <span class="spec-label">Storage</span>
-                            <span class="spec-value">825GB SSD</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Resolution</span>
-                            <span class="spec-value">4K UHD (8K support)</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Controller</span>
-                            <span class="spec-value">DualSense Wireless</span>
-                        </div>
-                        <div class="spec-item">
-                            <span class="spec-label">Warranty</span>
-                            <span class="spec-value">1 Year</span>
-                        </div>
+                        <div class="spec-item"><span class="spec-label">Storage</span><span class="spec-value">825GB SSD</span></div>
+                        <div class="spec-item"><span class="spec-label">Resolution</span><span class="spec-value">4K UHD (8K support)</span></div>
+                        <div class="spec-item"><span class="spec-label">Controller</span><span class="spec-value">DualSense Wireless</span></div>
+                        <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">1 Year</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Delivery Information -->
             <div class="delivery-card">
-                <div class="delivery-title">
-                    🚚 Shipment & Delivery
-                </div>
+                <div class="delivery-title">🚚 Shipment & Delivery</div>
                 <div class="delivery-detail">📍 Ships from USA warehouse to anywhere worldwide</div>
                 <div class="delivery-detail">⏱️ Delivery time: 5-10 business days (Express: 2-4 days)</div>
                 <div class="delivery-detail">🔒 Fully insured & tracked shipment</div>
@@ -383,14 +425,14 @@
             </div>
         </div>
 
-        <!-- RIGHT: PAYMENT FORM -->
+        <!-- RIGHT: PAYMENT SECTION -->
         <div class="payment-card">
             <h2>Complete Purchase</h2>
-            <div class="payment-sub">Powered by <strong>Grey</strong> • Secure US transactions</div>
+            <div class="payment-sub">Choose your preferred payment method</div>
 
             <div class="quantity-selector">
                 <label style="font-weight: 700;">Quantity:</label>
-                <input type="number" id="quantity" min="1" max="10" value="1" style="width: 80px;">
+                <input type="number" id="quantity" min="1" max="10" value="1">
                 <span style="color: #475569;">x $550 = <strong id="totalDisplay">$550.00</strong></span>
             </div>
 
@@ -399,47 +441,90 @@
                 <span class="amount-value" id="displayAmount">$550.00</span>
             </div>
 
-            <form id="paymentForm">
-                <div class="form-group">
-                    <label>Full Name (as on card)</label>
-                    <input type="text" id="cardName" placeholder="John Doe" required>
+            <!-- Payment Method Tabs -->
+            <div class="payment-options">
+                <button class="pay-option-btn active" data-method="grey">💳 Grey (Card)</button>
+                <button class="pay-option-btn" data-method="airtm">💰 Airtm</button>
+                <button class="pay-option-btn" data-method="crypto">₿ Crypto (USDT)</button>
+            </div>
+
+            <!-- GREY PANEL (Maintenance) -->
+            <div id="greyPanel" class="payment-form-panel active-panel">
+                <div class="maintenance-note">
+                    ⚠️ Grey payment option is currently under maintenance. Please use Airtm or Crypto. We apologize for the inconvenience.
                 </div>
-                <div class="form-group">
-                    <label>Card Number</label>
-                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
-                </div>
-                <div class="row-2">
+                <button id="greyMaintenanceBtn" style="background: #64748b; cursor: not-allowed;" disabled>Grey Unavailable</button>
+            </div>
+
+            <!-- AIRTM PANEL -->
+            <div id="airtmPanel" class="payment-form-panel">
+                <form id="airtmForm">
                     <div class="form-group">
-                        <label>Expiry (MM/YY)</label>
-                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                        <label>📧 Email Address</label>
+                        <input type="email" id="airtmEmail" placeholder="customer@example.com" required>
                     </div>
                     <div class="form-group">
-                        <label>CVC</label>
-                        <input type="text" id="cvc" placeholder="123" maxlength="4" required>
+                        <label>👤 Airtm Username (Optional)</label>
+                        <input type="text" id="airtmUsername" placeholder="username">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Email (for receipt & tracking)</label>
-                    <input type="email" id="email" placeholder="you@example.com" required>
-                </div>
+                    <div class="form-group">
+                        <label>📝 Full Name</label>
+                        <input type="text" id="airtmName" placeholder="John Doe" required>
+                    </div>
+                    <button type="submit">Request Payment via Airtm</button>
+                </form>
+                <div id="airtmMessage" class="message"></div>
+                <p style="font-size: 12px; color: #64748b; margin-top: 12px; text-align: center;">
+                    You will receive a payment request from our Airtm account within 24 hours.
+                </p>
+            </div>
+
+            <!-- CRYPTO PANEL -->
+            <div id="cryptoPanel" class="payment-form-panel">
+                <form id="cryptoForm">
+                    <div class="form-group">
+                        <label>📧 Your Email (for confirmation)</label>
+                        <input type="email" id="cryptoEmail" placeholder="customer@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Full Name</label>
+                        <input type="text" id="cryptoName" placeholder="John Doe" required>
+                    </div>
+                    <button type="submit" id="cryptoPayBtn">Pay via Crypto (USDT)</button>
+                </form>
                 
-                <button type="submit" id="payBtn">Pay with Grey</button>
-            </form>
-            <div id="message"></div>
-            <div class="test-note">
-                🔐 Test mode — Use card: 4242 4242 4242 4242 | Any expiry | Any CVC
+                <div id="cryptoDetails" style="display: none;">
+                    <div class="crypto-address">
+                        <strong>💸 USDT (TRC20) Deposit Address:</strong><br>
+                        <code id="usdtAddress">TVvYRDdPyQCCg22onuaau56rS5PNP3Gx7s</code>
+                        <button type="button" class="copy-btn" onclick="copyToClipboard('usdtAddress')">📋 Copy Address</button>
+                        <br><br>
+                        <strong>🆔 Binance ID (Optional):</strong><br>
+                        <code id="binanceId">1067841957</code>
+                        <button type="button" class="copy-btn" onclick="copyToClipboard('binanceId')">📋 Copy ID</button>
+                    </div>
+                    <div class="crypto-address" style="background: #fef3c7; text-align: left;">
+                        <strong>📌 Instructions:</strong><br>
+                        • Send exact amount: <strong id="cryptoAmount">$550.00 USD</strong> in USDT (TRC20 network)<br>
+                        • Include your email in the memo/note if possible<br>
+                        • After sending, wait 10-30 minutes for confirmation<br>
+                        • You will receive an email confirmation once payment is verified<br>
+                        • Contact us if you don't receive confirmation within 24 hours
+                    </div>
+                </div>
+                <div id="cryptoMessage" class="message"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    const UNIT_PRICE = 550;
     const quantityInput = document.getElementById('quantity');
     const totalDisplaySpan = document.getElementById('totalDisplay');
     const amountDisplaySpan = document.getElementById('displayAmount');
-    const form = document.getElementById('paymentForm');
-    const UNIT_PRICE = 550;
 
+    // Update total when quantity changes
     function updateTotal() {
         let qty = parseInt(quantityInput.value) || 1;
         if (qty < 1) qty = 1;
@@ -447,66 +532,90 @@
         const total = UNIT_PRICE * qty;
         totalDisplaySpan.innerText = `$${total.toFixed(2)}`;
         amountDisplaySpan.innerText = `$${total.toFixed(2)}`;
+        document.getElementById('cryptoAmount') && (document.getElementById('cryptoAmount').innerText = `$${total.toFixed(2)} USD`);
         return total;
     }
 
     quantityInput.addEventListener('input', updateTotal);
     updateTotal();
 
-    // Format card number with spaces
-    document.getElementById('cardNumber').addEventListener('input', function(e) {
-        let val = e.target.value.replace(/\s/g, '');
-        if (val.length > 16) val = val.slice(0,16);
-        let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
-        e.target.value = formatted;
+    // Payment method switching
+    const methodBtns = document.querySelectorAll('.pay-option-btn');
+    const panels = {
+        grey: document.getElementById('greyPanel'),
+        airtm: document.getElementById('airtmPanel'),
+        crypto: document.getElementById('cryptoPanel')
+    };
+
+    methodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const method = btn.getAttribute('data-method');
+            methodBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            Object.values(panels).forEach(panel => panel.classList.remove('active-panel'));
+            panels[method].classList.add('active-panel');
+        });
     });
 
-    form.addEventListener('submit', async (e) => {
+    // Copy to clipboard function
+    window.copyToClipboard = function(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const msg = document.getElementById('cryptoMessage');
+            msg.innerText = '✅ Copied to clipboard!';
+            msg.className = 'message success';
+            setTimeout(() => {
+                msg.className = 'message';
+                msg.innerText = '';
+            }, 2000);
+        });
+    };
+
+    // AIRTM Form Submit
+    document.getElementById('airtmForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const payBtn = document.getElementById('payBtn');
-        const msgDiv = document.getElementById('message');
-        msgDiv.className = '';
-        msgDiv.style.display = 'none';
-        payBtn.disabled = true;
-        payBtn.innerText = 'Processing...';
+        const email = document.getElementById('airtmEmail').value;
+        const username = document.getElementById('airtmUsername').value;
+        const name = document.getElementById('airtmName').value;
+        const total = updateTotal();
+        const msgDiv = document.getElementById('airtmMessage');
 
-        const totalAmount = UNIT_PRICE * (parseInt(quantityInput.value) || 1);
+        msgDiv.className = 'message info';
+        msgDiv.innerText = '⏳ Sending payment request...';
 
-        const payload = {
-            fullName: document.getElementById('cardName').value,
-            cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, ''),
-            expiry: document.getElementById('expiry').value,
-            cvc: document.getElementById('cvc').value,
-            amount: totalAmount,
-            currency: 'USD',
-            email: document.getElementById('email').value,
-            quantity: parseInt(quantityInput.value) || 1
-        };
+        // Simulate sending request (in production, this would call your backend)
+        setTimeout(() => {
+            msgDiv.className = 'message success';
+            msgDiv.innerHTML = `✅ Payment request sent to <strong>${email}</strong>!<br>We will contact you within 24 hours at ${username ? `Airtm: ${username} or ` : ''}${email}. Total: $${total.toFixed(2)}`;
+            document.getElementById('airtmForm').reset();
+        }, 1000);
+    });
 
-        try {
-            const response = await fetch('/api/create-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
+    // CRYPTO Form Submit - Show deposit details
+    document.getElementById('cryptoForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('cryptoEmail').value;
+        const name = document.getElementById('cryptoName').value;
+        const total = updateTotal();
+        const msgDiv = document.getElementById('cryptoMessage');
+        const cryptoDetailsDiv = document.getElementById('cryptoDetails');
 
-            if (response.ok && result.success) {
-                msgDiv.innerText = `✅ Payment successful! ${payload.quantity} x PS5 ordered. Shipment tracking will be sent to ${payload.email}. Transaction ID: ${result.transactionId}`;
-                msgDiv.className = 'success';
-                form.reset();
-                quantityInput.value = 1;
-                updateTotal();
-            } else {
-                throw new Error(result.message || 'Payment failed');
-            }
-        } catch (error) {
-            msgDiv.innerText = '❌ ' + error.message;
-            msgDiv.className = 'error';
-        } finally {
-            payBtn.disabled = false;
-            payBtn.innerText = 'Pay with Grey';
+        if (!email) {
+            msgDiv.className = 'message error';
+            msgDiv.innerText = '❌ Please enter your email address.';
+            return;
         }
+
+        // Show crypto details
+        cryptoDetailsDiv.style.display = 'block';
+        document.getElementById('cryptoAmount').innerText = `$${total.toFixed(2)} USD`;
+        
+        msgDiv.className = 'message success';
+        msgDiv.innerHTML = `✅ Thank you ${name}! A confirmation email has been sent to <strong>${email}</strong> with deposit instructions. Please send exactly $${total.toFixed(2)} USDT to the address above.`;
+        
+        // Scroll to crypto details
+        cryptoDetailsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 </script>
 </body>

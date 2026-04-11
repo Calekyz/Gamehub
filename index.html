@@ -226,35 +226,90 @@
             border-radius: 12px;
         }
 
-        /* Payment Options */
+        /* PAYMENT OPTIONS - IMPROVED VISIBLE BUTTONS */
         .payment-options {
             display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 15px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
         .pay-option-btn {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            background: white;
-            border-radius: 40px;
-            font-weight: 600;
+            padding: 14px 12px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .pay-option-btn.active {
-            background: #0f172a;
+        /* Individual Button Colors */
+        .pay-option-btn[data-method="grey"] {
+            background: linear-gradient(135deg, #1a2a3a, #0f172a);
             color: white;
-            border-color: #0f172a;
+            border: 1px solid #4a5568;
         }
 
-        .pay-option-btn:hover:not(.active) {
-            border-color: #3b82f6;
-            background: #f1f5f9;
+        .pay-option-btn[data-method="airtm"] {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: white;
+        }
+
+        .pay-option-btn[data-method="crypto"] {
+            background: linear-gradient(135deg, #f7931a, #ffb347);
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            animation: subtleGlow 2s infinite alternate;
+        }
+
+        /* Hover Effects */
+        .pay-option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pay-option-btn[data-method="grey"]:hover {
+            background: linear-gradient(135deg, #2d3e50, #1e293b);
+        }
+
+        .pay-option-btn[data-method="airtm"]:hover {
+            background: linear-gradient(135deg, #0096c7, #023e8a);
+        }
+
+        .pay-option-btn[data-method="crypto"]:hover {
+            background: linear-gradient(135deg, #e68500, #f4a261);
+        }
+
+        /* Active/Selected State */
+        .pay-option-btn.active {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid white;
+        }
+
+        .pay-option-btn[data-method="grey"].active {
+            background: linear-gradient(135deg, #3b4d5e, #2d3748);
+        }
+
+        .pay-option-btn[data-method="airtm"].active {
+            background: linear-gradient(135deg, #0077b6, #00b4d8);
+        }
+
+        .pay-option-btn[data-method="crypto"].active {
+            background: linear-gradient(135deg, #ffb347, #f7931a);
+        }
+
+        @keyframes subtleGlow {
+            from {
+                box-shadow: 0 4px 10px rgba(247, 147, 26, 0.3);
+            }
+            to {
+                box-shadow: 0 6px 20px rgba(247, 147, 26, 0.6);
+            }
         }
 
         /* Payment Forms */
@@ -441,7 +496,7 @@
                 <span class="amount-value" id="displayAmount">$550.00</span>
             </div>
 
-            <!-- Payment Method Tabs -->
+            <!-- Payment Method Tabs - IMPROVED VISIBILITY -->
             <div class="payment-options">
                 <button class="pay-option-btn active" data-method="grey">💳 Grey (Card)</button>
                 <button class="pay-option-btn" data-method="airtm">💰 Airtm</button>
@@ -532,7 +587,10 @@
         const total = UNIT_PRICE * qty;
         totalDisplaySpan.innerText = `$${total.toFixed(2)}`;
         amountDisplaySpan.innerText = `$${total.toFixed(2)}`;
-        document.getElementById('cryptoAmount') && (document.getElementById('cryptoAmount').innerText = `$${total.toFixed(2)} USD`);
+        const cryptoAmountElem = document.getElementById('cryptoAmount');
+        if (cryptoAmountElem) {
+            cryptoAmountElem.innerText = `$${total.toFixed(2)} USD`;
+        }
         return total;
     }
 
